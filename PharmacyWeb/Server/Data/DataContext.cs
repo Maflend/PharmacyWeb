@@ -5,13 +5,11 @@ namespace PharmacyWeb.Server.Data
 {
     public class DataContext : DbContext
     {
-       
         public DataContext()
         {
             //Database.EnsureDeleted();
             //Database.EnsureCreated();
         }
-
         public DataContext(DbContextOptions options) : base(options){}
 
         public DbSet<User> Users { get; set; }
