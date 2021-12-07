@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PharmacyWeb.Server.Data;
+using PharmacyWeb.Server.Services.ProductService;
+using PharmacyWeb.Shared;
 using PharmacyWeb.Shared.Models;
 
 namespace PharmacyWeb.Server.Controllers
@@ -8,13 +11,17 @@ namespace PharmacyWeb.Server.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        public ProductController()
-        {
-            
-        }
-        //public async Task<ActionResult<List<Product>>> GetProducts()
-        //{
+        private readonly IProductService _productService;
 
-        //}
+        public ProductController(IProductService productService)
+        {
+            _productService = productService;
+        }
+        [HttpGet]
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetProducts()
+        {
+            var response = await _productService.GetProducts();
+            return Ok(response);
+        }
     }
 }
