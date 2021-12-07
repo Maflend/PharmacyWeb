@@ -12,9 +12,7 @@ namespace PharmacyWeb.Server.Data
             //Database.EnsureCreated();
         }
 
-        public DataContext(DbContextOptions options) : base(options)
-        {
-        }
+        public DataContext(DbContextOptions options) : base(options){}
 
         public DbSet<User> Users { get; set; }
         public DbSet<Product> Products { get; set; }
