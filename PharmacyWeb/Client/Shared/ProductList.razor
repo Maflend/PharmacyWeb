@@ -1,0 +1,49 @@
+﻿@inject IProductService ProductService
+
+@if(ProductService.Products is null || ProductService.Products.Count == 0)
+{
+    <h3>Loading...</h3>
+}
+else
+{
+    <div class="row">
+        @foreach(var product in ProductService.Products)
+        {
+            <div class="col">
+                    <div class="card text-center bg-light mb-4 shadow rounded" style="width:20rem; height:15rem;">
+                        <div class="card-header">
+                            <strong>@product.Name</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-text">
+                                @if(product.Description.Length > 70)
+                                {
+                                    <span>@product.Description.Substring(0,70) ...</span>
+                                }
+                                else
+                                {
+                                    @product.Description
+                                }
+                            </div> 
+                        </div>
+                        <div class="mb-2" style="color:green;"><h5>@product.RetailPrice р</h5></div>
+                        <button class="btn btn-outline-dark  mb-0">В корзину</button>
+                    </div>
+            </div>
+        }
+    </div>
+
+}
+
+
+
+
+
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ProductService.GetProducts();
+    }
+}
