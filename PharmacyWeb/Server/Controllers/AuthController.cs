@@ -31,9 +31,10 @@ namespace PharmacyWeb.Server.Controllers
             }
             else
             {
-                return Ok(new ServiceResponse<User>()
+                return BadRequest(new ServiceResponse<User>()
                 {
-                    Message = "Регистрация не выполнена."
+                    Success = false,
+                    Message = "Имя пользователя занято."
                 });
             }
         }
@@ -51,7 +52,7 @@ namespace PharmacyWeb.Server.Controllers
             }
             else
             {
-                return NotFound(new ServiceResponse<User>()
+                return BadRequest(new ServiceResponse<User>()
                 {
                     Success = false,
                     Message = "Пользователь не найден."

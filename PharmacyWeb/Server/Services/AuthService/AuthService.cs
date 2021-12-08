@@ -18,13 +18,12 @@ namespace PharmacyWeb.Server.Services.AuthService
             var user = await _context.Users
                 .Where(u => u.Login == request.Username && u.Password == request.Password)
                 .FirstOrDefaultAsync();
-            //.FirstOrDefaultAsync(u => u.Login == request.Username && u.Password == request.Password);
             return user;
         }
 
         public async Task<User> Register(UserRegister request)
         {
-            User user = new User();
+            User user = null;
             if (!_context.Users.Any(u=>u.Login == request.Username))
             {
                 user = new User();
@@ -33,7 +32,6 @@ namespace PharmacyWeb.Server.Services.AuthService
                 user.Role = Roles.Client;
                 _context.Add(user);
                 await _context.SaveChangesAsync();
-                
             }
             return user;
         }
