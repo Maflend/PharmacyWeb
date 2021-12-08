@@ -12,6 +12,7 @@ namespace PharmacyWeb.Client
         private readonly ILocalStorageService _localStorage;
         private readonly IAuthService _authService;
 
+      
         public CustomAuthStateProvider(ILocalStorageService localStorage, IAuthService authService)
         {
             _localStorage = localStorage;
@@ -35,7 +36,6 @@ namespace PharmacyWeb.Client
                     new Claim(ClaimTypes.Name,_authService.User.Login),
                     }, "My authentication type");
                     state = new AuthenticationState(new ClaimsPrincipal(identity));
-                   
                 }
                 else
                 {
@@ -46,7 +46,8 @@ namespace PharmacyWeb.Client
             }
 
             NotifyAuthenticationStateChanged(Task.FromResult(state));
-
+            
+            _authService.AuthStatusInvoke();
             return state;
         }
 

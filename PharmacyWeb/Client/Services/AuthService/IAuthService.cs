@@ -9,5 +9,7 @@ namespace PharmacyWeb.Client.Services.AuthService
         string Message { get; set; }
         event Action AuthStatus;
         Task Login(UserLogin request);
+        Task<bool> Register(UserRegister request);
+        Task AuthStatusInvoke();
     }
 }
