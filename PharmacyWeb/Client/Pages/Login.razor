@@ -1,0 +1,77 @@
+﻿@page "/login"
+@using PharmacyWeb.Shared.Models
+
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IAuthService AuthService
+@inject HttpClient http
+
+<h3>Авторизация</h3>
+<h5>@AuthService.Message</h5>
+<EditForm Model="@user" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label for="email">Email</label>
+        <InputText id="email" @bind-Value="user.Username" class="form-control" />
+        <ValidationMessage For="@(()=> user.Username)"/>
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <InputText id="password" @bind-Value="user.Password" type="password" class="form-control" />
+         <ValidationMessage For="@(()=> user.Password)"/>
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+    
+</EditForm>
+
+@code {
+    private UserLogin user = new();
+
+    protected override void OnInitialized()
+    {
+        AuthService.AuthStatus += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        AuthService.AuthStatus -= StateHasChanged;
+    }
+
+    private async void HandleLogin()
+    {
+        await LocalStorage.SetItemAsync<string>("username", user.Username);
+        await LocalStorage.SetItemAsync<string>("password", user.Password);
+        await AuthStateProvider.GetAuthenticationStateAsync();
+        if(AuthService.User != null)
+        {
+            NavigationManager.NavigateTo("");
+        }
+    }
+}
+
+
+
+
+
+@*
+ var res = await http.GetAsync($"api/auth/login/{user.Username}");
+        var userResponse = await res.Content.ReadFromJsonAsync<ServiceResponse<User>>();
+
+         WWWWORKED
+
+
+
+
+        if(userResponse != null)
+        {
+             message = "usere";
+            if(userResponse.Data != null)
+            {
+                 message = "Success";
+                 await LocalStorage.SetItemAsync<string>("username", userResponse.Data.Login);
+                 await LocalStorage.SetItemAsync<string>("password", userResponse.Data.Password);
+            }
+           
+            // NavigationManager.NavigateTo("");
+        }*@
