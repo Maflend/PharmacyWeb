@@ -22,5 +22,11 @@ namespace PharmacyWeb.Server.Services.ProductService
             };
             return response;
         }
+
+        public async Task<ServiceResponse<List<Product>>> GetProductsByCategory(int categoryIndex)
+        {
+            var products = await _context.Products.Where(p => (int)p.Category.Categories == categoryIndex).ToListAsync();
+            return new ServiceResponse<List<Product>>() { Data = products };
+        }
     }
 }
