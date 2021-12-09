@@ -20,8 +20,14 @@ namespace PharmacyWeb.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<ServiceResponse<List<Product>>>> GetProducts()
         {
-            var response = await _productService.GetProducts();
-            return Ok(response);
+            var result = await _productService.GetProducts();
+            return Ok(result);
+        }
+        [HttpGet("category/{categoryIndex}")]
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetProductsByCategory(int categoryIndex)
+        {
+            var result = await _productService.GetProductsByCategory(categoryIndex);
+            return Ok(result);
         }
     }
 }

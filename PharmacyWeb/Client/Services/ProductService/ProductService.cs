@@ -14,10 +14,15 @@ namespace PharmacyWeb.Client.Services.ProductService
         }
         public List<Product> Products { get; set; } = new();
 
-        public async Task GetProducts()
+        public event Action ProductsChanged;
+
+        public async Task GetProducts(int? categoryIndex = null)
         {
-            var result = await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>("api/Product");
+            var result = categoryIndex == null ?
+                await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>("api/Product") :
+                await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>($"api/Product/Category/{categoryIndex}");
             Products = result.Data;
+            ProductsChanged.Invoke();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿@page "/"
+@page "/category/{categoryIndex}"
 
 @inject IProductService ProductService
 
@@ -7,4 +8,15 @@
 
 <ProductList/>
 
+@code{
+    [Parameter]
+    public string CategoryIndex { get; set; }
 
+    protected override async Task OnParametersSetAsync()
+    {   
+        if(CategoryIndex!= null)
+            await ProductService.GetProducts(int.Parse(CategoryIndex));
+        else
+             await ProductService.GetProducts();
+    }
+}
