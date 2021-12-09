@@ -1,6 +1,9 @@
-﻿@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+﻿@using PharmacyWeb.Shared.Models
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager NavigationManager
+@inject ICategoryService CategoryService
+
 
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
@@ -18,6 +21,19 @@
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
         </div>
+        @if (CategoryService.Categories != null)
+        {
+            @foreach (var category in CategoryService.Categories)
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="@category.Categories">
+                        <span class="oi oi-puzzle-piece" aria-hidden="true"></span> @(Enum.GetName(category.Categories))
+                    </NavLink>
+                </div>
+            }
+        }
+
+        
 
         <AuthorizeView>
             <NotAuthorized>
@@ -44,7 +60,7 @@
     </nav>
 </div>
 
-@code {
+    @code {
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
@@ -53,6 +69,12 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+       await CategoryService.GetCategories();
+    }
+
     private async void Logout()
     {
         await LocalStorage.RemoveItemAsync("username");
@@ -60,4 +82,6 @@
         await AuthStateProvider.GetAuthenticationStateAsync();
         NavigationManager.NavigateTo("login");
     }
+
+   
 }
