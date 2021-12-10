@@ -1,19 +1,22 @@
-﻿@inject IProductService ProductService
+﻿
+@inject IProductService ProductService
+@inject ILocalStorageService LocalStorage
+@inject IToastService ToastService
+@inject ICartService CartService
 
 @if(ProductService.Products is null || ProductService.Products.Count == 0)
 {
-    <h3>Loading...</h3>
+    <div class="shadow rounded mb-4 p-3 border border-3 border-secondary" style="background-color: white; width:100%; height:max-content; opacity:0.98; ">
+        <h3>Loading...</h3>
+    </div>
 }
 else
 {
-    <div class="row" style="background-image: url(https://images.freeimages.com/images/premium/previews/4169/41694330-seamless-background-with-chemical-flasks.jpg">
+    <div class="row">
         @foreach(var product in ProductService.Products)
         {
             <div class="col">
                     <div class="card text-center bg-light mb-4 shadow rounded" style="width:20rem; height:15rem; opacity: 0.98">
-                      
-                     
-                          
 
                         <div class="card-header" style="background-color: rgba(51, 170, 51, .4) ">
                             <strong>@product.Name</strong>
@@ -31,7 +34,7 @@ else
                             </div> 
                         </div>
                         <div class="mb-2" style="color:green;"><h5>@product.RetailPrice р</h5></div>
-                        <button class="btn btn-outline-dark  mb-0">В корзину</button>
+                        <button class="btn btn-outline-dark  mb-0" @onclick="(()=>AddToCart(product.Id))">В корзину</button>
                     </div>
             </div>
         }
@@ -55,6 +58,16 @@ else
         ProductService.ProductsChanged -= StateHasChanged;
     }
 
+    private async Task AddToCart(int id)
+    {
+        var product = ProductService.Products
+        .Where(p => p.Id == id)
+        .First();
 
-   
+        await CartService.AddToCart(product);
+
+
+    }
+
+
 }
