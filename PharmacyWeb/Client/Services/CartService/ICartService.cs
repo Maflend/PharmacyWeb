@@ -9,5 +9,6 @@ namespace PharmacyWeb.Client.Services.CartService
         Task AddToCart(Product product);
 
         Task GetCartItems();
+        Task EmptyCart();
     }
 }

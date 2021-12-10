@@ -56,11 +56,13 @@ namespace PharmacyWeb.Client.Services.CartService
                     Sales.Add(new Sale { Product = product, Quantity = 1 });
                 }
             }
+        }
 
-           
-            
-
-
+        public async Task EmptyCart()
+        {
+            await _localStorage.RemoveItemAsync("cart");
+            Sales = new List<Sale>();
+            OnChange.Invoke();
         }
     }
 }
