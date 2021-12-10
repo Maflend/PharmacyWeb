@@ -6,12 +6,16 @@
 }
 else
 {
-    <div class="row">
+    <div class="row" style="background-image: url(https://images.freeimages.com/images/premium/previews/4169/41694330-seamless-background-with-chemical-flasks.jpg">
         @foreach(var product in ProductService.Products)
         {
             <div class="col">
-                    <div class="card text-center bg-light mb-4 shadow rounded" style="width:20rem; height:15rem;">
-                        <div class="card-header">
+                    <div class="card text-center bg-light mb-4 shadow rounded" style="width:20rem; height:15rem; opacity: 0.98">
+                      
+                     
+                          
+
+                        <div class="card-header" style="background-color: rgba(51, 170, 51, .4) ">
                             <strong>@product.Name</strong>
                         </div>
                         <div class="card-body">
