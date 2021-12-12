@@ -37,18 +37,26 @@ namespace PharmacyWeb.Client.Services.CartService
 
         public async Task AddToCart(Product product)
         {
-            var cart = await _localStorage.GetItemAsync<List<Product>>("cart");
-            if(cart is null)
+            if(_authService.User != null)
             {
-                cart = new();
+                var cart = await _localStorage.GetItemAsync<List<Product>>("cart");
+                if (cart is null)
+                {
+                    cart = new();
+                }
+                cart.Add(product);
+                await _localStorage.SetItemAsync("cart", cart);
+
+                var productName = _productService.Products.First(p => p.Id == product.Id).Name;
+                _toastService.ShowSuccess(productName, "Добавлено в корзину:");
+
+                OnChange.Invoke();
             }
-            cart.Add(product);
-            await _localStorage.SetItemAsync("cart", cart);
-
-            var productName = _productService.Products.First(p => p.Id == product.Id).Name;
-            _toastService.ShowSuccess(productName, "Добавлено в корзину:");
-
-            OnChange.Invoke();
+            else
+            {
+                _toastService.ShowError("Для покупки товара необходимо авторизоваться");
+            }
+            
         }
 
         public async Task GetCartItems()
@@ -102,7 +110,8 @@ namespace PharmacyWeb.Client.Services.CartService
                 };
 
 
-                await _localStorage.SetItemAsync<CartOrder>("order", cartOrder);
+               // await _localStorage.SetItemAsync<CartOrder>("order", cartOrder);
+
                 var response = await _http.PostAsJsonAsync<CartOrder>("api/order", cartOrder);
                 var orderResponse = await response.Content.ReadFromJsonAsync<ServiceResponse<Order>>();
                 if (orderResponse.Success)

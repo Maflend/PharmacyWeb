@@ -10,14 +10,18 @@ namespace PharmacyWeb.Client.Services.AuthService
     public class AuthService : IAuthService
     {
         private readonly HttpClient _http;
- 
+        private readonly ILocalStorageService _localStorage;
+   
+
         public event Action AuthStatus;
 
         public User User { get; set; }
         public string Message { get; set; } = "";
-        public AuthService(HttpClient http)
+        public AuthService(HttpClient http, ILocalStorageService localStorage)
         {
             _http = http;
+            _localStorage = localStorage;
+       
         }
 
         public async Task Login(UserLogin request)
@@ -59,6 +63,12 @@ namespace PharmacyWeb.Client.Services.AuthService
             return success;
         }
 
-      
+        public async Task Logout()
+        {
+            await _localStorage.RemoveItemAsync("username");
+            await _localStorage.RemoveItemAsync("password");
+          //  await _authStateProvider.GetAuthenticationStateAsync();
+            AuthStatus.Invoke();
+        }
     }
 }
