@@ -11,5 +11,7 @@ namespace PharmacyWeb.Client.Services.AuthService
         Task Login(UserLogin request);
         Task<bool> Register(UserRegister request);
         Task AuthStatusInvoke();
+
+        Task Logout();
     }
 }
