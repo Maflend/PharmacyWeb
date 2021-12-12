@@ -111,6 +111,7 @@ namespace PharmacyWeb.Client.Services.CartService
 
 
                // await _localStorage.SetItemAsync<CartOrder>("order", cartOrder);
+
                 var response = await _http.PostAsJsonAsync<CartOrder>("api/order", cartOrder);
                 var orderResponse = await response.Content.ReadFromJsonAsync<ServiceResponse<Order>>();
                 if (orderResponse.Success)
