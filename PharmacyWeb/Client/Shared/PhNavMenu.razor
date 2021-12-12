@@ -1,0 +1,95 @@
+﻿@using PharmacyWeb.Shared.Models
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavigationManager
+@inject ICategoryService CategoryService
+@inject IAuthService AuthService
+@inject ICartService CartService
+
+
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <nav class="nav flex-nav">
+
+
+        <div class="nav-item px-2">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+
+            @if (CategoryService.Categories != null)
+            {
+                @foreach (var category in CategoryService.Categories)
+                {
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" @onclick="@(()=> NavigationManager.NavigateTo($"category/{(int)category.Categories}"))" style="cursor:pointer;">
+                            <span class="oi oi-puzzle-piece" aria-hidden="true"></span> @(Enum.GetName(category.Categories))
+                        </NavLink>
+                    </div>
+                }
+            }
+       
+       
+    
+        <div style="margin-right:25px; margin-left:auto">
+            <AuthorizeView>
+            <NotAuthorized>
+                <div class="row">
+
+                    <div class="nav-item px-2 col">
+                        <NavLink class="nav-link" href="login">
+                            <span class="oi oi-account-login" aria-hidden="true"></span> Авторизоваться
+                        </NavLink>
+                    </div>
+                    <div class="nav-item px-2 col">
+                        <NavLink class="nav-link" href="register">
+                            <span class="oi oi-people" aria-hidden="true"></span> Зарегистрироваться
+                        </NavLink>
+                    </div>
+                </div>
+            </NotAuthorized>
+            <Authorized>
+                <div class="nav-item px-2 col">
+                    <NavLink class="nav-link" @onclick="Logout">
+                        <span class="oi oi-account-logout" aria-hidden="true"></span> Выйти
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+        </div>
+
+        
+
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CategoryService.GetCategories();
+
+    }
+
+
+    private async void Logout()
+    {
+        await LocalStorage.RemoveItemAsync("username");
+        await LocalStorage.RemoveItemAsync("password");
+        AuthService.User = null;
+        await AuthStateProvider.GetAuthenticationStateAsync();
+
+        await CartService.EmptyCart();
+        //await AuthService.Logout();
+        NavigationManager.NavigateTo("login");
+    }
+}

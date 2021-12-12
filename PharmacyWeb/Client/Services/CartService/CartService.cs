@@ -116,6 +116,7 @@ namespace PharmacyWeb.Client.Services.CartService
                 var orderResponse = await response.Content.ReadFromJsonAsync<ServiceResponse<Order>>();
                 if (orderResponse.Success)
                 {
+                    _toastService.ShowInfo("Оплата произведена успешно");
                     Message = "";
                     await EmptyCart();
                 }
