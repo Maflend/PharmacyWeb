@@ -1,0 +1,85 @@
+﻿@page "/cart"
+@inject ICartService CartService
+
+<div class="shadow rounded mb-4  border border-3 border-secondary" style="background-color: white; width:100%; height:max-content; opacity:0.98; ">
+    <ul class="nav flex-nav p-3">
+        <li style="margin-bottom:0; margin-top:auto"> <h3>Ваша корзина</h3> </li>
+        <li style="margin-left: auto; margin-right:0; margin-bottom:0; margin-top:auto"> <h4>Общая сумма: @GetTotalPrice() рублей</h4> </li>
+    </ul>
+
+    @CartService.Message
+
+
+    <div class="mb-3 mt-1" style="float: right;">
+         <button class="btn btn-primary"  style="margin-left: auto; margin-right:0;" @onclick="@CartService.CreateOrder">Оплатить</button>
+         <button class="btn btn-secondary" @onclick="@CartService.EmptyCart">Очистить</button>
+    </div>
+    
+    
+</div>
+
+<div style="clear:both;">
+
+
+@if(CartService.Sales == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="row">
+        @foreach(var sale in CartService.Sales)
+        {
+            <div class="col">
+                    <div class="card text-center bg-light mb-4 shadow rounded" style="width:20rem; height:15rem; opacity: 0.98">
+                        <div class="card-header" style="background-color: rgba(51, 170, 51, .4) ">
+                            <strong>@sale.Product.Name</strong>  
+                            <span style="font-style:italic">(@sale.Quantity)</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-text">
+                                @if(sale.Product.Description.Length > 70)
+                                {
+                                    <span>@sale.Product.Description.Substring(0,70) ...</span>
+                                }
+                                else
+                                {
+                                    @sale.Product.Description
+                                }
+                            </div> 
+                        </div>
+                        <div class="mb-2" style="color:green;"><h5>@sale.Product.RetailPrice р</h5></div>
+                    </div>
+            </div>
+        }
+    </div>
+}
+</div>
+
+
+
+
+
+@code {
+    List<Product> products = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CartService.GetCartItems();
+    }
+
+    private double GetTotalPrice()
+    {
+        double total = 0;
+
+        foreach(var sale in CartService.Sales)
+        {
+            total += sale.Quantity * sale.Product.RetailPrice;
+        }
+        return total;
+    }
+    private void CreateOrder()
+    {
+        var order = CartService.CreateOrder();
+    }
+}
