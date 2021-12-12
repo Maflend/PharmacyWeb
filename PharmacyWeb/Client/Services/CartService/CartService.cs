@@ -1,7 +1,12 @@
 ﻿using Blazored.LocalStorage;
 using Blazored.Toast.Services;
+using Microsoft.AspNetCore.Components;
+using PharmacyWeb.Client.Services.AuthService;
 using PharmacyWeb.Client.Services.ProductService;
+using PharmacyWeb.Shared;
+using PharmacyWeb.Shared.Cart;
 using PharmacyWeb.Shared.Models;
+using System.Net.Http.Json;
 
 namespace PharmacyWeb.Client.Services.CartService
 {
@@ -10,15 +15,23 @@ namespace PharmacyWeb.Client.Services.CartService
         private readonly ILocalStorageService _localStorage;
         private readonly IProductService _productService;
         private readonly IToastService _toastService;
+        private readonly IAuthService _authService;
+        private readonly HttpClient _http;
 
         public List<Sale> Sales { get; set; } = new();
+        public string Message { get; set; } = "";
 
-
-        public CartService(ILocalStorageService localStorage, IProductService productService, IToastService toastService)
+        public CartService(ILocalStorageService localStorage,
+            IProductService productService,
+            IToastService toastService,
+            IAuthService authService,
+            HttpClient http)
         {
             _localStorage = localStorage;
             _productService = productService;
             _toastService = toastService;
+            _authService = authService;
+            _http = http;
         }
         public event Action OnChange;
 
@@ -63,6 +76,46 @@ namespace PharmacyWeb.Client.Services.CartService
             await _localStorage.RemoveItemAsync("cart");
             Sales = new List<Sale>();
             OnChange.Invoke();
+        }
+
+        public async Task CreateOrder()
+        {
+            if(Sales != null && Sales.Count != 0)
+            {
+                List<CartSale> cartSales = new();
+
+                foreach(var sale in Sales)
+                {
+                    CartSale cartSale = new()
+                    {
+                        Quantity = sale.Quantity,
+                        ProductId = sale.Product.Id
+                    };
+                    cartSales.Add(cartSale);
+                }
+
+                CartOrder cartOrder = new()
+                {
+                    UserId = _authService.User.Id,
+                    DateCreate = DateTime.Now,
+                    CartSales = cartSales
+                };
+
+
+                await _localStorage.SetItemAsync<CartOrder>("order", cartOrder);
+                var response = await _http.PostAsJsonAsync<CartOrder>("api/order", cartOrder);
+                var orderResponse = await response.Content.ReadFromJsonAsync<ServiceResponse<Order>>();
+                if (orderResponse.Success)
+                {
+                    Message = "";
+                    await EmptyCart();
+                }
+                Message = orderResponse.Message;
+                
+            }
+            
+           
+            
         }
     }
 }

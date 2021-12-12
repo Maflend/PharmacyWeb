@@ -18,8 +18,8 @@ else
             <div class="col">
                     <div class="card text-center bg-light mb-4 shadow rounded" style="width:20rem; height:15rem; opacity: 0.98">
 
-                        <div class="card-header" style="background-color: rgba(51, 170, 51, .4) ">
-                            <strong>@product.Name</strong>
+                        <div class="card-header" style="background-color: rgba(51, 170, 51, .4);">
+                            <h4><strong>@product.Name</strong></h4>
                         </div>
                         <div class="card-body">
                             <div class="card-text">
@@ -65,7 +65,6 @@ else
         .First();
 
         await CartService.AddToCart(product);
-
 
     }
 

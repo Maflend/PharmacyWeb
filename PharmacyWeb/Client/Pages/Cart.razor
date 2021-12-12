@@ -7,8 +7,11 @@
         <li style="margin-left: auto; margin-right:0; margin-bottom:0; margin-top:auto"> <h4>Общая сумма: @GetTotalPrice() рублей</h4> </li>
     </ul>
 
+    @CartService.Message
+
+
     <div class="mb-3 mt-1" style="float: right;">
-         <button class="btn btn-primary"  style="margin-left: auto; margin-right:0;">Оплатить</button>
+         <button class="btn btn-primary"  style="margin-left: auto; margin-right:0;" @onclick="@CartService.CreateOrder">Оплатить</button>
          <button class="btn btn-secondary" @onclick="@CartService.EmptyCart">Очистить</button>
     </div>
     
@@ -68,11 +71,15 @@ else
     private double GetTotalPrice()
     {
         double total = 0;
-        
+
         foreach(var sale in CartService.Sales)
         {
             total += sale.Quantity * sale.Product.RetailPrice;
         }
         return total;
+    }
+    private void CreateOrder()
+    {
+        var order = CartService.CreateOrder();
     }
 }

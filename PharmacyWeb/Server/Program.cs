@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PharmacyWeb.Server.Data;
 using PharmacyWeb.Server.Services.AuthService;
 using PharmacyWeb.Server.Services.CategoryService;
+using PharmacyWeb.Server.Services.OrderService;
 using PharmacyWeb.Server.Services.ProductService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,7 @@ builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(build
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 
 var app = builder.Build();
