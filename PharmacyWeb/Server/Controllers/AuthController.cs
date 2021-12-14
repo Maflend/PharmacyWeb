@@ -45,10 +45,21 @@ namespace PharmacyWeb.Server.Controllers
 
             if (user != null)
             {
-                return Ok(new ServiceResponse<User>()
+                if(user?.Role != Roles.Admin && user?.Role != Roles.Director && user?.Role != Roles.Employee)
                 {
-                    Data = user
+                    return Ok(new ServiceResponse<User>()
+                    {
+                        Data = user
+                    });
+                }
+                return BadRequest(new ServiceResponse<User>()
+                {
+                    Success = false,
+                    Message = "Пользователь не найден."
                 });
+
+
+
             }
             else
             {
@@ -56,7 +67,7 @@ namespace PharmacyWeb.Server.Controllers
                 {
                     Success = false,
                     Message = "Пользователь не найден."
-                }); ;
+                });
             }
 
         }
